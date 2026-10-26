@@ -1,21 +1,22 @@
 from flask import Flask, request
+import os
 
 app = Flask(__name__)
 
-# VULNERABILITY 1: Hardcoded Secret (CWE-798)
-AWS_SECRET_KEY = "AKIAIOSFODNN7EXAMPLEwJalrXUtnFEMI/K7MDENG/bPxRfiCY"
-DB_PASSWORD = "SuperSecretPassword123!"
+# SECURE: Useing environment variables instead of hardcoded secrets
+AWS_SECRET_KEY = os.environ.get('AWS_SECRET_KEY')
+DB_PASSWORD = os.environ.get('DB_PASSWORD')
 
 @app.route('/login', methods=['POST'])
 def login():
     username = request.form['username']
     password = request.form['password']
-       
-    # VULNERABILITY 2: SQL Injection (CWE-89)
-    # A secure app would use parameterized queries, not string concatenation.
-    query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'"
-       
-    return f"Executing query: {query}"
+    
+    # SECURE: Useing parameterized queries to prevent SQL injection
+    query = "SELECT * FROM users WHERE username = %s AND password = %s"
+    params = (username, password)
+    
+    return f"Executing secure query with parameters"
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

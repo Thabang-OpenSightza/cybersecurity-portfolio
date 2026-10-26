@@ -1,0 +1,43 @@
+name: DevSecOps Shift-Left Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Detect Hardcoded Secrets (Gitleaks)
+      uses: gitleaks/gitleaks-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install SAST Tool (Bandit)
+      run: pip install bandit
+
+    - name: Run SAST Scan on Python Code
+      run: bandit -r src/ -ll -f txt -o bandit-report.txt || true
+
+    - name: Fail Build if High Severity Flaws Found
+      run: |
+        echo "Checking Bandit report for High severity issues..."
+        if grep -q "High" bandit-report.txt; then
+          echo "CRITICAL SECURITY FLAWS DETECTED!"
+          cat bandit-report.txt
+          exit 1
+        else
+          echo "No high severity flaws found."
+        fi

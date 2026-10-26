@@ -34,10 +34,10 @@ jobs:
     - name: Fail Build if High Severity Flaws Found
       run: |
         echo "Checking Bandit report for High severity issues..."
-        if grep -q "High" bandit-report.txt; then
+        if grep -qE "High: [1-9]" bandit-report.txt; then
           echo "CRITICAL SECURITY FLAWS DETECTED!"
           cat bandit-report.txt
           exit 1
         else
-          echo "No high severity flaws found."
+          echo "No high severity flaws found. Build passed!"
         fi

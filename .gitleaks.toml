@@ -1,0 +1,5 @@
+[allowlist]
+description = "Allowlist the example AWS key used for testing"
+regexes = [
+  '''AKIAIOSFODNN7EXAMPLE'''
+]

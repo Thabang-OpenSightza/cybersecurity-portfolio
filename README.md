@@ -11,6 +11,17 @@ WTC-G9BEDDDP
 ## Executive Summary
 This project demonstrates a "Shift-Left" DevSecOps pipeline designed to catch security vulnerabilities before they reach production. Using GitHub Actions, the pipeline automatically executes Static Application Security Testing (SAST) and secrets detection on every code push. If critical flaws (such as hardcoded credentials or SQL injection vectors) are detected, the build fails, preventing insecure code from being merged.
 
+## Proof of Concept & Evidence
+
+**1. Pipeline Catching Vulnerabilities (Intentional Failure):**
+*(Screenshot showing the Red X in GitHub Actions when Gitleaks/Bandit detected the hardcoded secret and SQL injection)*
+
+**2. Pipeline Passing After Remediation:**
+*(Screenshot showing the Green Checkmark after fixing the code to use environment variables and parameterized queries)*
+
+**3. Secure Code Implementation:**
+*(Screenshot of `src/app.py` showing `os.environ.get` and secure SQL query practices)*
+
 ## Architecture Diagram
 
 ```mermaid

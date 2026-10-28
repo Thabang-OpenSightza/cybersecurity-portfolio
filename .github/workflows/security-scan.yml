@@ -36,6 +36,16 @@ jobs:
         pip install pip-audit
         pip-audit -r src/requirements.txt --desc
 
+    - name: Scan Dockerfile for Vulnerabilities (Trivy)
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'table'
+        exit-code: '1'
+        ignore-unfixed: true
+        severity: 'CRITICAL,HIGH'
+
     - name: Fail Build if High Severity Flaws Found
       run: |
         echo "Checking Bandit report for High severity issues..."
